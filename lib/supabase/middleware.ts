@@ -3,6 +3,12 @@ import { NextResponse, type NextRequest } from "next/server";
 import { protectedPaths, authPaths } from "@/lib/constants";
 
 export async function updateSession(request: NextRequest) {
+	// Check if environment variables are available
+	if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+		console.error('Supabase credentials not found');
+		return NextResponse.next();
+	}
+
 	let response = NextResponse.next({
 		request: {
 			headers: request.headers,
@@ -10,8 +16,8 @@ export async function updateSession(request: NextRequest) {
 	});
 
 	const supabase = createServerClient(
-		process.env.NEXT_PUBLIC_SUPABASE_URL!,
-		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+		process.env.NEXT_PUBLIC_SUPABASE_URL,
+		process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
 		{
 			cookies: {
 				get(name: string) {
